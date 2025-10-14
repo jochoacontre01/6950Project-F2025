@@ -7,3 +7,5 @@
 *.log
 *.xml
 *.gz
+6950env/
+data/
