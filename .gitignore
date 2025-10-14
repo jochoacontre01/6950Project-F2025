@@ -10,3 +10,4 @@
 test.py
 6950env/
 data/
+src/cds_api/__pycache__/
