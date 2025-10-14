@@ -1,0 +1,77 @@
+\documentclass[letterpaper, 12pt]{article}
+
+\usepackage[top=1in, left=1.25in, right=1.25in, bottom=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage[style=apa, sortcites=true, sorting=nyt, backend=biber]{biblatex}
+\usepackage{parskip}
+\usepackage{caption}
+\usepackage{setspace}
+\usepackage{titling}
+\usepackage{bookmark}
+
+\captionsetup{font=footnotesize}
+
+\addbibresource{ref.bib}
+
+\author{Jesus Ochoa-Contreras}
+\date{October 21, 2025}
+\title{IPCC Climate Scenarios: how our decisions will shape our future}
+
+\begin{document}
+\spacing{1.0}
+\setlength{\parskip}{10pt}
+\setlength{\parindent}{30pt}
+
+% \maketitle
+
+\begin{center}
+	
+	\LARGE{\textbf{IPCC Climate Scenarios: how our decisions are shaping our future}} \\
+	\vspace{0.5cm}
+	\Large{Course: 6950 - Computer based tools and applications} \\
+	\vspace{0.25cm}
+	\large{Author: Jesus Ochoa-Contreras} \\
+	\vspace{0.25cm}
+	\large{Fall 2025 - October 21, 2025} \\
+	
+	\vspace{1cm}
+	\large{\textbf{\textit{Project proposal}}}
+\end{center}
+
+
+\section{Introduction}
+
+To-do:
+
+\begin{itemize}
+	\item what is SSP
+	\item what are the main scenarios
+	\item which variables does it model
+	\item Which variable am I going to model
+	\item What are the expected results
+\end{itemize}
+
+The IPCC (Intergovernmental Panel on Climate Change) was created by the United Nations Environment Programme on 1988, dedicated to provide policymakers with regular scientific assessments on climate change, critical to prepare for potential climate risks and to develop mitigation and adaptation strategies for companies and governments all over the world. The IPCC does not conduct its own research, rather it identifies where there is agreement on the scientific comunity about climate change, reporting it neutrally but staying policy-relevant \parencite{ipcc}.
+
+A climate scenario is an assumption about political changes and their effect on climate change. There are multiple climate scenarios describes after the Shared Socio-economic Pathways (SSP), which include plausible socio-political and technological scenarios and its consequences on every variable playing a role on climate change. Under the Coupled Model Intercomparison Project Phase 6 (CMIP6) and through Copernicus Climate Data Store, multiple climate variables are available for free download as gridded data for historic or SSP experiments \parencite{cmip6_ca}.
+
+This project will be focusing on the reduction of sea ice in the outskirts of Newfoundland and Labrador, Canada, since climate change and generalized global warming have imposed increasing stress on the accumulation of ice, crucial for climate regulation.
+
+
+\section{Methodology}
+
+The data will be downloaded from the Copernicus Climate Data Store \parencite{Copernicus_Climate_Change_Service2021-vo}, which contains all the variables calculated during the CMIP6 experiments, as gridded datasets with a 1 degree resolution. The general process will consist in downloading the data through a public API, loading them using \texttt{xarray} package from Python to process such a big dataset, and assessing the changes on sea ice concentration in the atlantic coast of Canada. The results will be the historical change since 1950 and the projected changes under the most relevant climate scenarios.
+
+Finally, a relationship between the carbon emissions and sea ice concentration will be established, indicating how our current industrial activities are affecting the weather globally and changing weather patterns.
+
+
+
+
+\printbibliography
+
+
+\end{document}
