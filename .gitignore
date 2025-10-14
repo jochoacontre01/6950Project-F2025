@@ -7,5 +7,6 @@
 *.log
 *.xml
 *.gz
+test.py
 6950env/
 data/
