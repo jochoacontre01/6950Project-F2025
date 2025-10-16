@@ -1,11 +1,11 @@
 # 6950Project-F2025
 Project for the course "6950 - Computer based tools and applications" during Fall 2025 semester, Memorial University of Newfoundland
 
-# IPCC climte scenarios: how our decissions are shaping our future
+# IPCC climte scenarios: how our decisions are shaping our future
 
 ## Objective
 
-Analyze the changes in temperature and its relationship with carbon emissions and sea ice concentration around the coasts of Newfounldand, Canada, under historical changes and different climatic outcomes.
+Analyze the changes in temperature and its relationship with carbon emissions and sea ice concentration around the coasts of Newfoundland, Canada, under historical changes and different climatic outcomes.
 
 ## Methodology
 
