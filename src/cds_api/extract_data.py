@@ -58,8 +58,8 @@ def get_api_request():
     request = {
         "temporal_resolution": "monthly",
         "experiment": "historical",
-        "variable": "sea_ice_mass_per_area",
-        "model": "access_cm2",
+        "variable": "snow_depth",
+        "model": "cesm2",
         "year": [
             "1950", "1951", "1952",
             "1953", "1954", "1955",
@@ -91,5 +91,5 @@ def get_api_request():
             "10", "11", "12"
         ]
     }
-
+    
     return dataset, request
