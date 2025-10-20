@@ -1,1 +1,6 @@
+addcopyfighandler==3.2.4
 cdsapi==0.7.7
+geopandas==1.1.1
+matplotlib==3.10.7
+numpy==2.3.4
+xarray==2025.10.1
