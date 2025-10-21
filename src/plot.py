@@ -78,15 +78,9 @@ fig.set_size_inches(8,6)
 plt.tight_layout()
 plt.show()
 
-# ds_loc_map = ds.sel(
-# 	lat=slice(
-# 		interest_point[0] - buffer_deg, interest_point[0] + buffer_deg,
-# 	),
-# 	lon=slice(
-# 		interest_point[1] - buffer_deg, interest_point[1] + buffer_deg
-# 	)
-# )
 
+# ! -------------
+# ! Time series plot of snow depth change
 ds_loc_timeline = ds.sel(lat=slice(interest_point[0]-buffer_deg, interest_point[0]+buffer_deg), lon=slice(interest_point[1]-buffer_deg, interest_point[1]+buffer_deg))
 
 # ds_filtered = ds_loc_timeline.groupby('time.season')['DJF'].mean(dim=['lat','lon'])
