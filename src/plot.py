@@ -76,6 +76,7 @@ cbar = plt.colorbar(im, label='meters')
 fig = plt.gcf()
 fig.set_size_inches(8,6)
 plt.tight_layout()
+plt.savefig('src/Fig/snow_change_map_atl_CA.png', dpi=150)
 plt.show()
 
 
@@ -90,6 +91,8 @@ years = ds_filtered.time.dt.year
 plt.plot(years, ds_filtered, 'ok-')
 plt.xlabel('Year')
 plt.ylabel('Depth (m)')
-plt.title('Snow depth change')
+plt.title('Snow depth change in Atlantic Canada')
 plt.gcf().set_size_inches(8,6)
+plt.tight_layout()
+plt.savefig('src/Fig/snow_change_timeseries_atl_CA.png', dpi=150)
 plt.show()
