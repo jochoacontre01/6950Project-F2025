@@ -16,7 +16,9 @@ matplotlib.rcParams.update({'font.size': 16})
 
 # ! -------------
 # ! Data loading
-ds = xr.load_dataset(r'/media/jochoa/DATA/Documentos/MUN Earth Sciences Masters Degree/000 - Courses/CMSC-6950_Comp_based_tools/Project/6950Project-F2025/data/monthly_historical_snow_depth_cesm2_1950-2014_01-12/snd_LImon_CESM2_historical_r1i1p1f1_gn_19500115-20141215.nc', engine='h5netcdf')['snd']
+ds = xr.load_dataset(r'/media/jochoa/DATA/Documentos/MUN Earth Sciences Masters Degree/000 - Courses/CMSC-6950_Comp_based_tools/Project/6950Project-F2025/data/monthly_historical_near_surface_air_temperature_cesm2_1950-2014_01-12/tas_Amon_CESM2_historical_r1i1p1f1_gn_19500115-20141215.nc', engine='h5netcdf')['tas']
+# ['snd'] for snow depth
+# ['tas] for near-surface air temperature
 
 world_boundaries = gpd.read_file(r'/media/jochoa/DATA/Documentos/MUN Earth Sciences Masters Degree/000 - Courses/CMSC-6950_Comp_based_tools/Project/6950Project-F2025/src/assets/world-administrative-boundaries-countries/world-administrative-boundaries-countries.shp')
 
@@ -55,11 +57,11 @@ mask = np.isfinite(difference)
 difference = np.where(mask, difference, 0)
 toplot = difference
 
-vmin = -0.5
-vmax = 0.5
+vmax = np.amax(toplot)
+vmin = -vmax
 norm = TwoSlopeNorm(0, vmin, vmax)
 # toplot = np.clip(toplot, np.quantile(toplot, 0.25), np.quantile(toplot, 0.75))
-im = plt.imshow(toplot, origin='lower', cmap='RdBu', extent=(np.amin(longitudes), np.amax(longitudes), np.amin(latitudes), np.amax(latitudes)), norm=norm, interpolation='bicubic')
+im = plt.imshow(toplot, origin='lower', cmap='RdBu_r', extent=(np.amin(longitudes), np.amax(longitudes), np.amin(latitudes), np.amax(latitudes)), norm=norm, interpolation='bicubic')
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 plt.title('Changes in snow depth for the periods 1950-1980 and 2010-2015')
@@ -94,5 +96,5 @@ plt.ylabel('Depth (m)')
 plt.title('Snow depth change in Atlantic Canada')
 plt.gcf().set_size_inches(8,6)
 plt.tight_layout()
-plt.savefig('src/Fig/snow_change_timeseries_atl_CA.png', dpi=150)
+# plt.savefig('src/Fig/snow_change_timeseries_atl_CA.png', dpi=150)
 plt.show()
