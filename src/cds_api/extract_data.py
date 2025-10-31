@@ -58,7 +58,7 @@ def get_api_request():
     request = {
         "temporal_resolution": "monthly",
         "experiment": "historical",
-        "variable": "snow_depth",
+        "variable": "near_surface_air_temperature",
         "model": "cesm2",
         "year": [
             "1950", "1951", "1952",
@@ -91,5 +91,5 @@ def get_api_request():
             "10", "11", "12"
         ]
     }
-    
+        
     return dataset, request
