@@ -3,6 +3,7 @@ from warnings import warn
 import cdsapi 
 import time
 from requests.exceptions import ChunkedEncodingError
+from urllib.error import HTTPError
 import zipfile
 
 class CDSExtract:
@@ -82,6 +83,8 @@ class CDSExtract:
                     time.sleep(timeout_duration)
                 else:
                     warn('Max retries reached. Finishing execution', category=Warning)
+            except HTTPError as e:
+                print(e, 'Check the API variable names and values. Not all variables exist for all models!')
 
     def unzip(self, unzip_to=None, overwrite=True):
         if unzip_to is not None:
