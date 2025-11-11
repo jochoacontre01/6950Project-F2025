@@ -2,14 +2,26 @@ import cdsapi
 import os
 # from warnings import warn
 import zipfile
+from warnings import warn
 
 class CDSData:
+
 
     def __init__(self, dataset, request):
         self.dataset = dataset
         self.request = request
         self.out_file = None
 
+    def deprecate():
+        warn(
+            'This class is deprecated and should not be used'
+            'Please use CDSAPI instead',
+            category=DeprecationWarning,
+            stacklevel=2
+        )
+
+    deprecate()
+    
     def make_request(self, out=None, overwrite=False):
         if out is None:
             self.out_file = os.path.join(self._create_parent_folder(), get_file_name())
@@ -23,7 +35,6 @@ class CDSData:
                     os.remove(self.out_file)
                     self.out_file = out
             
-        
         
         client = cdsapi.Client()
         client.retrieve(self.dataset, self.request, target=self.out_file)
