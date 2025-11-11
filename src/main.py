@@ -16,8 +16,8 @@ for experiment in experiments:
 
 		client = CDSExtract(
 			temporal_resolution='monthly',
-			experiment='SSP3-7.0',
-			variable='Near-surface air temperature',
+			experiment=experiment,
+			variable=variable,
 			model='CESM2 (USA)',
 			year=year,
 			month=np.arange(1, 13, dtype=int)
