@@ -1,6 +1,6 @@
 import re
 
-class match_scenario():
+class match_scenario:
 
 	def __init__(self, str):
 		self.str = str
@@ -21,4 +21,6 @@ class match_scenario():
 			fromatted_str = ''.join(match_char[:3])+match_char[3]+'-'+match_char[4]+'.'+match_char[5]
 
 			return fromatted_str.upper()
+		else:
+			return
 
