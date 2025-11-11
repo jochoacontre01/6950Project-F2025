@@ -1,13 +1,15 @@
-from cds_api.extract_data import CDSData, get_api_request, get_file_name
-import os
+from cds_api.CDSAPI import CDSExtract
+import numpy as np
 
-request = get_api_request()
 
-parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-data_dir = os.path.join(parent_dir, 'data')
-out = os.path.join(data_dir, get_file_name())
+client = CDSExtract(
+	temporal_resolution='daily',
+	experiment='SSP3-7.0',
+	variable='Near-surface air temperature',
+	model='CESM2 (USA)',
+	year=np.arange(2015, 2051, dtype=int),
+	month=np.arange(1, 13, dtype=int),
+	day=np.arange(1, 31, dtype=int)
+)
 
-cdsrequest = CDSData(*request)
-cdsrequest.make_request(out, overwrite=False)
-
-cdsrequest.unzip()
+client.retrieve_request()
