@@ -19,18 +19,27 @@ class CDSExtract:
         ):
         
         self.temporal_resolution = temporal_resolution
-        self.experiment = experiment
-        self.variable = variable
-        self.model = model
+        self.experiment = self._get_experiment()
+        self.variable = self._get_variable()
+        self.model = self._get_model()
         self.year = year
         self.month = month
         self.day = day
         self.level = level
 
         if self.year is not None:
-            self.target = f'{self.variable}_{self.temporal_resolution.lower()}_{self.experiment}_{self.model}_{min(self.year)}-{max(self.year)}.zip'
+            self.target = f'{self._get_variable()}_{self.temporal_resolution.lower()}_{self._get_experiment()}_{self._get_model()}_{min(self.year)}-{max(self.year)}.zip'
         else:
             self.target = f'{self.variable}_{self.temporal_resolution.lower()}_{self.experiment}_{self.model}.zip'
+
+    def _get_model(self):
+        return self.model.split()[0].lower().replace('-','_').replace(' ','_').strip()
+    
+    def _get_variable(self):
+        return self.variable.lower().replace(' ','_').replace('-','_').strip()
+    
+    def _get_experiment(self):
+        return self.experiment.lower().replace(' ','_').replace('-','_').replace('.','_').strip()
 
     def _create_parent_folder(self):
         parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
