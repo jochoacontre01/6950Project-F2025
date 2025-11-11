@@ -8,6 +8,7 @@ import scienceplots
 import matplotlib
 from numpy import fft
 import sys
+import os
 
 
 plt.style.use(['science','no-latex'])
@@ -16,11 +17,15 @@ matplotlib.rcParams.update({'font.size': 16})
 
 # ! -------------
 # ! Data loading
-ds = xr.load_dataset(r'/media/jochoa/DATA/Documentos/MUN Earth Sciences Masters Degree/000 - Courses/CMSC-6950_Comp_based_tools/Project/6950Project-F2025/data/monthly_historical_near_surface_air_temperature_cesm2_1950-2014_01-12/tas_Amon_CESM2_historical_r1i1p1f1_gn_19500115-20141215.nc', engine='h5netcdf')['tas']
-# ['snd'] for snow depth
-# ['tas] for near-surface air temperature
 
-world_boundaries = gpd.read_file(r'/media/jochoa/DATA/Documentos/MUN Earth Sciences Masters Degree/000 - Courses/CMSC-6950_Comp_based_tools/Project/6950Project-F2025/src/assets/world-administrative-boundaries-countries/world-administrative-boundaries-countries.shp')
+ds_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data/snow_depth_monthly_ssp1_2_6_cesm2_2015-2050/snd_LImon_CESM2_ssp126_r4i1p1f1_gn_20150115-20501215.nc')
+var = os.path.basename(ds_path).split("_")[0]
+ds = xr.load_dataset(ds_path, engine='h5netcdf')[var]
+if var == 'tas':
+	ds = ds-273.15
+
+wbound_path = os.path.join(os.path.dirname(__file__), 'assets/world-administrative-boundaries-countries/world-administrative-boundaries-countries.shp')
+world_boundaries = gpd.read_file(wbound_path)
 
 
 # ! -------------
@@ -61,14 +66,26 @@ vmax = np.amax(toplot)
 vmin = -vmax
 norm = TwoSlopeNorm(0, vmin, vmax)
 # toplot = np.clip(toplot, np.quantile(toplot, 0.25), np.quantile(toplot, 0.75))
-im = plt.imshow(toplot, origin='lower', cmap='RdBu_r', extent=(np.amin(longitudes), np.amax(longitudes), np.amin(latitudes), np.amax(latitudes)), norm=norm, interpolation='bicubic')
+
+if var == 'snd':
+	cmap = 'winter'
+elif var == 'tas':
+	cmap = 'RdBu_r'
+
+im = plt.imshow(toplot, origin='lower', cmap=cmap, extent=(np.amin(longitudes), np.amax(longitudes), np.amin(latitudes), np.amax(latitudes)), norm=norm, interpolation='bicubic')
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
-plt.title('Changes in snow depth for the periods 1950-1980 and 2010-2015')
+
+if var == 'snd':
+	plt.title('Changes in snow depth for the periods 1950-1980 and 2010-2015')
+	cbar = plt.colorbar(im, label='meters')
+elif var == 'tas':
+	plt.title('Changes in temperature for the periods 1950-1980 and 2010-2015')
+	cbar = plt.colorbar(im, label='C')
+
 plt.xlim(interest_point[1]-buffer_deg, interest_point[1]+buffer_deg)
 plt.ylim(interest_point[0]-buffer_deg, interest_point[0]+buffer_deg)
 
-cbar = plt.colorbar(im, label='meters')
 # ticks = np.arange(np.floor(vmin), np.ceil(vmax) + 1, 5)  
 # ticklabels = [f"$10^{{{int(tick)}}}$" if tick > 0 else f"$10^{{{int(tick)}}}$" for tick in ticks]  
 # cbar.set_ticks(ticks)  
@@ -78,7 +95,7 @@ cbar = plt.colorbar(im, label='meters')
 fig = plt.gcf()
 fig.set_size_inches(8,6)
 plt.tight_layout()
-plt.savefig('src/Fig/snow_change_map_atl_CA.png', dpi=150)
+# plt.savefig('src/Fig/snow_change_map_atl_CA.png', dpi=150)
 plt.show()
 
 
@@ -92,8 +109,14 @@ ds_filtered = ds_loc_timeline.resample(time='QS-DEC').mean()[::4].mean(dim=['lat
 years = ds_filtered.time.dt.year
 plt.plot(years, ds_filtered, 'ok-')
 plt.xlabel('Year')
-plt.ylabel('Depth (m)')
-plt.title('Snow depth change in Atlantic Canada')
+
+if var == 'snd':
+	plt.ylabel('Depth (m)')
+	plt.title('Snow depth change in Atlantic Canada')
+elif var == 'tas':
+	plt.ylabel('Tenperature (C)')
+	plt.title('Temperature change in Atlantic Canada')
+
 plt.gcf().set_size_inches(8,6)
 plt.tight_layout()
 # plt.savefig('src/Fig/snow_change_timeseries_atl_CA.png', dpi=150)
