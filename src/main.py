@@ -1,15 +1,27 @@
 from cds_api.CDSAPI import CDSExtract
 import numpy as np
 
+experiments = ['Historical','SSP1-2.6','SSP3-7.0']
+variables = [
+	'Near-surface air temperature',
+	'Snow depth'
+]
 
-client = CDSExtract(
-	temporal_resolution='daily',
-	experiment='SSP3-7.0',
-	variable='Near-surface air temperature',
-	model='CESM2 (USA)',
-	year=np.arange(2015, 2051, dtype=int),
-	month=np.arange(1, 13, dtype=int),
-	day=np.arange(1, 31, dtype=int)
-)
+for experiment in experiments:
+	for variable in variables:
+		if experiment != 'Historical':
+			year = np.arange(2015, 2051, dtype=int)
+		else:
+			year = np.arange(1950, 2016, dtype=int)
 
-client.retrieve_request()
+		client = CDSExtract(
+			temporal_resolution='monthly',
+			experiment='SSP3-7.0',
+			variable='Near-surface air temperature',
+			model='CESM2 (USA)',
+			year=year,
+			month=np.arange(1, 13, dtype=int)
+		)
+
+		client.retrieve_request()
+		client.unzip()
