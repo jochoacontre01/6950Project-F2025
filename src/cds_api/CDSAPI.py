@@ -19,9 +19,9 @@ class CDSExtract:
         ):
         
         self.temporal_resolution = temporal_resolution
-        self.experiment = self._get_experiment()
-        self.variable = self._get_variable()
-        self.model = self._get_model()
+        self.experiment = experiment
+        self.variable = variable
+        self.model = model
         self.year = year
         self.month = month
         self.day = day
@@ -30,7 +30,7 @@ class CDSExtract:
         if self.year is not None:
             self.target = f'{self._get_variable()}_{self.temporal_resolution.lower()}_{self._get_experiment()}_{self._get_model()}_{min(self.year)}-{max(self.year)}.zip'
         else:
-            self.target = f'{self.variable}_{self.temporal_resolution.lower()}_{self.experiment}_{self.model}.zip'
+            self.target = f'{self._get_variable()}_{self.temporal_resolution.lower()}_{self._get_experiment()}_{self._get_model()}.zip'
 
     def _get_model(self):
         return self.model.split()[0].lower().replace('-','_').replace(' ','_').strip()
@@ -67,13 +67,13 @@ class CDSExtract:
             key: value
             for key, value in {
                 'temporal_resolution': self.temporal_resolution.lower(),
-                'experiment': self.experiment,
-                'variable': self.variable,
+                'experiment': self._get_experiment(),
+                'variable': self._get_variable(),
                 'level': self.level,
-                'model': self.model,
+                'model': self._get_model(),
                 'year': [str(y) for y in self.year] if self.year is not None else None,
-                'month': [str(m) for m in self.month] if self.month is not None else None,
-                'day': [str(d) for d in self.day] if self.day is not None else None,
+                'month': [str(m).zfill(2) for m in self.month] if self.month is not None else None,
+                'day': [str(d).zfill(2) for d in self.day] if self.day is not None else None,
             }.items()
             if value is not None
         }
