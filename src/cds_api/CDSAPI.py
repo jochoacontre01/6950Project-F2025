@@ -1,5 +1,8 @@
 import os
 from warnings import warn
+import cdsapi 
+import time
+from requests.exceptions import ChunkedEncodingError
 
 class CDSExtract:
 
@@ -30,7 +33,7 @@ class CDSExtract:
             self.target = f'{self.variable}_{self.temporal_resolution.lower()}_{self.experiment}_{self.model}.zip'
 
 
-    def retrieve_request(self, target_directory=None, overwrite_duplicated=False):
+    def retrieve_request(self, target_directory=None, overwrite_duplicated=False, retries=5, timeout_duration=5):
         if target_directory is None:
             target_directory = os.getcwd()
 
@@ -57,11 +60,24 @@ class CDSExtract:
                 'model': self.model,
                 'year': [str(y) for y in self.year] if self.year is not None else None,
                 'month': [str(m) for m in self.month] if self.month is not None else None,
-                'day': [str(d) for da in self.day] if self.day is not None else None,
+                'day': [str(d) for d in self.day] if self.day is not None else None,
             }.items()
             if value is not None
         }
 
         print(f'Retrieving {self.target}')
 
-    
+        client = cdsapi.Client()
+        retry_count = 0
+        while retry_count < retries:
+            try:
+                client.retrieve(dataset, request, target=self.full_target_file)
+                print(f'Successfully retrieved and saved to {self.full_target_file}')
+                break
+            except ChunkedEncodingError:
+                retry_count += 1
+                if retry_count < retries:
+                    warn(f'ChunkedEncodingError encountered, perhaps a network error? Retrying {retry_count}/{retries}...', category=Warning)
+                    time.sleep(timeout_duration)
+                else:
+                    warn('Max retries reached. Finishing execution', category=Warning)
