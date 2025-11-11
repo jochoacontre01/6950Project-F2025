@@ -8,7 +8,7 @@
 *.xml
 *.gz
 test.py
-6950env/
+*__pycache__/
+.venv/
 data/
 src/cds_api/__pycache__/
-*__pycache__/
