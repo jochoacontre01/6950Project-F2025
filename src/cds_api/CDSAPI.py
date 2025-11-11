@@ -3,6 +3,7 @@ from warnings import warn
 import cdsapi 
 import time
 from requests.exceptions import ChunkedEncodingError
+import zipfile
 
 class CDSExtract:
 
@@ -81,3 +82,32 @@ class CDSExtract:
                     time.sleep(timeout_duration)
                 else:
                     warn('Max retries reached. Finishing execution', category=Warning)
+
+    def unzip(self, unzip_to=None, overwrite=True):
+        if unzip_to is not None:
+            extracting_to = os.path.join(unzip_to, os.path.splitext(self.target)[0])
+        else:
+            extracting_to = os.path.splitext(self.full_target_file)[0]
+        
+        if os.path.exists(extracting_to):
+            if overwrite:
+                for root, dirs, files in os.walk(extracting_to, topdown=False):
+                    for name in files:
+                        os.remove(os.path.join(root, name))
+                    for name in dirs:
+                        os.rmdir(os.path.join(root, name))
+            else:
+                warn('The file has already been unzipped to this location. Skipping unpacking', category=Warning)
+        else:
+            os.makedirs(extracting_to, exist_ok=True)
+
+        try:
+            with zipfile.ZipFile(self.full_target_file, 'r') as zip_ref:
+                zip_ref.extractall(extracting_to)
+            print(f'\nSuccessfully extracted to {extracting_to}')
+            return extracting_to
+        except FileNotFoundError:
+            raise FileNotFoundError('Ensure the zip file exists or check location')
+        except zipfile.BadZipFile:
+            raise zipfile.BadZipFile('The zip file appears to be corrupted. Did it download correctly?')
+        
