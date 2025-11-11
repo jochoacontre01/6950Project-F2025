@@ -2,12 +2,10 @@ import os
 from warnings import warn
 import cdsapi 
 import time
-from requests.exceptions import ChunkedEncodingError
-from urllib.error import HTTPError
+from requests.exceptions import ChunkedEncodingError, HTTPError
 import zipfile
 
 class CDSExtract:
-
 
     def __init__(self,
         temporal_resolution:str=None,
@@ -34,10 +32,14 @@ class CDSExtract:
         else:
             self.target = f'{self.variable}_{self.temporal_resolution.lower()}_{self.experiment}_{self.model}.zip'
 
+    def _create_parent_folder(self):
+        parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        data_dir = os.path.join(parent_dir, 'data')
+        return data_dir
 
     def retrieve_request(self, target_directory=None, overwrite_duplicated=False, retries=5, timeout_duration=5):
         if target_directory is None:
-            target_directory = os.getcwd()
+            target_directory = self._create_parent_folder()
 
         os.makedirs(target_directory, exist_ok=True)
 
@@ -83,8 +85,10 @@ class CDSExtract:
                     time.sleep(timeout_duration)
                 else:
                     warn('Max retries reached. Finishing execution', category=Warning)
+                    return
             except HTTPError as e:
                 print(e, 'Check the API variable names and values. Not all variables exist for all models!')
+                return
 
     def unzip(self, unzip_to=None, overwrite=True):
         if unzip_to is not None:
