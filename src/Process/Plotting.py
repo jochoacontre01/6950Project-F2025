@@ -3,22 +3,45 @@ import numpy as np
 import os
 import geopandas as gpd
 from matplotlib.colors import TwoSlopeNorm
+from warnings import warn
+import xarray as xr
 
-wbound_path = os.path.join(os.path.dirname(__file__), 'assets/world-administrative-boundaries-countries/world-administrative-boundaries-countries.shp')
+wbound_path = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    "assets/world-administrative-boundaries-countries/world-administrative-boundaries-countries.shp",
+)
 world_boundaries = gpd.read_file(wbound_path)
+
 
 class PlotObject:
     def __init__(self, data, var):
         self.data = data
         self.var = var
-        self.longitudes = data['lon']
-        self.latitudes = data['lat']
+        self.is_xarray = None
+
+        if not isinstance(data, xr.DataArray):
+            warn(
+                "The input data is not xarray, some functions may not work properly",
+                category=RuntimeWarning,
+            )
+            self.is_xarray = False
+            self.longitudes = None
+            self.latitudes = None
+        else:
+            self.is_xarray = True
+            self.longitudes = data["lon"]
+            self.latitudes = data["lat"]
 
     def create_map(self, scenario, cpoint, buffer):
         if self.data.ndim < 2:
             raise ValueError(
                 f"Cannot create a map with data of shape {self.data.shape}"
             )
+            
+        if not self.is_xarray:
+            raise ValueError(
+				"Data is not of type xarray, cannot create map"
+			)
 
         fig = plt.figure(figsize=(9, 9))
         ax = fig.add_subplot()
@@ -74,12 +97,8 @@ class PlotObject:
                 )
             plt.colorbar(im, label="C", shrink=0.75)
 
-        ax.set_xlim(
-            cpoint[1] - buffer * 0.98, cpoint[1] + buffer * 0.98
-        )
-        ax.set_ylim(
-            cpoint[0] - buffer * 0.98, cpoint[0] + buffer * 0.98
-        )
+        ax.set_xlim(cpoint[1] - buffer * 0.98, cpoint[1] + buffer * 0.98)
+        ax.set_ylim(cpoint[0] - buffer * 0.98, cpoint[0] + buffer * 0.98)
 
         plt.tight_layout()
         plt.show()
