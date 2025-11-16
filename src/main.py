@@ -1,7 +1,7 @@
 from cds_api.CDSAPI import CDSExtract
 import numpy as np
 
-experiments = ['Historical','SSP1-2.6','SSP3-7.0']
+experiments = ['Historical','SSP2-4.5','SSP3-7.0']
 variables = [
 	'Near-surface air temperature',
 	'Snow depth'
@@ -23,5 +23,5 @@ for experiment in experiments:
 			month=np.arange(1, 13, dtype=int)
 		)
 
-		client.retrieve_request()
-		client.unzip()
+		client.retrieve_request(overwrite_duplicated=False)
+		client.unzip(overwrite=False)
