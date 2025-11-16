@@ -11,4 +11,5 @@ test.py
 *__pycache__/
 .venv/
 data/
+src/data/
 src/cds_api/__pycache__/
