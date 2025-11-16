@@ -84,6 +84,10 @@ scenario_370 = match_scenario(ds_path_370).format()
 
 scenarios = [scenario_historical, scenario_245, scenario_370]
 
+ds_hist_245 = xr.concat([ds_historical, ds_245], dim='time')
+
+
+
 # ! ###################################
 # ! Load world bounds dataset
 wbound_path = os.path.join(
@@ -161,6 +165,13 @@ ds_245_filtered = (
     )[::4]
     .max( dim=["lat", "lon"])
 )
+ds_hist_245_filtered = (
+    ds_hist_245.resample(time="QS-DEC")
+    .max(
+        
+    )[::4]
+    .max( dim=["lat", "lon"])
+)
 ds_370_filtered = (
     ds_370.resample(time="QS-DEC")
     .max(
@@ -169,14 +180,28 @@ ds_370_filtered = (
     .max( dim=["lat", "lon"])
 )
 
+years_hist_245 = ds_hist_245_filtered.time.dt.year
 years_historical = ds_historical_filtered.time.dt.year
 years_245 = ds_245_filtered.time.dt.year
 years_370 = ds_370_filtered.time.dt.year
 
+years_245_n = np.arange(min(years_245), max(years_245)+1)
+coeff_245 = np.polyfit(years_245, ds_245_filtered, deg=1)
+trend_245 = coeff_245[0]*years_245_n + coeff_245[1]
+
+years_370_n = np.arange(min(years_370), max(years_370)+1)
+coeff_370 = np.polyfit(years_370, ds_370_filtered, deg=1)
+trend_370 = coeff_370[0]*years_370_n + coeff_370[1]
+
 fig = plt.figure(figsize=(12,6))
-plt.plot(years_historical, ds_historical_filtered, "k-", lw=1.5, label="Historical")
-plt.plot(years_245, ds_245_filtered, "g-", lw=1.5, label="SSP2-4.5")
-plt.plot(years_370, ds_370_filtered, "b-", lw=1.5, label="SSP3-7.0")
+
+plt.plot()
+# plt.plot(years_hist_245, ds_hist_245_filtered, "oy-", lw=1.5, label="Historical + SSP2-4.5")
+plt.plot(years_245, trend_245, "g--", lw=1.5)
+plt.plot(years_370, trend_370, "b--", lw=1.5)
+plt.plot(years_historical, ds_historical_filtered, "ok-", alpha=0.5, lw=1.5, label="Historical")
+plt.plot(years_245, ds_245_filtered, "og-", alpha=0.5, lw=1.5, label="SSP2-4.5")
+plt.plot(years_370, ds_370_filtered, "ob-", alpha=0.5, lw=1.5, label="SSP3-7.0")
 plt.xlabel("Year")
 
 if var_historical == "snd":
