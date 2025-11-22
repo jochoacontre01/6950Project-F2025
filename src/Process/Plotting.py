@@ -5,6 +5,8 @@ import geopandas as gpd
 from matplotlib.colors import TwoSlopeNorm
 from warnings import warn
 import xarray as xr
+from cmocean import cm
+
 
 wbound_path = os.path.join(
     os.path.dirname(os.path.dirname(__file__)),
@@ -54,9 +56,9 @@ class PlotObject:
         norm = TwoSlopeNorm(0, vmin, vmax)
 
         if self.var == "snd":
-            cmap = "Spectral"
+            cmap = "PuOr"
         elif self.var == "tas":
-            cmap = "RdBu_r"
+            cmap = cm.balance
 
         im = ax.imshow(
             self.data,
@@ -78,22 +80,22 @@ class PlotObject:
         if self.var == "snd":
             if scenario == "Historical":
                 ax.set_title(
-                    f"Changes in snow depth\nPeriods 1950-1960 and 2005-2015\nScenario {scenario}"
+                    f"Changes in snow depth\nPeriods 1950-1955 and 2010-2015\nScenario {scenario}"
                 )
             else:
                 ax.set_title(
-                    f"Changes in snow depth\nPeriods 2015-2025 and 2040-2050\nScenario {scenario}"
+                    f"Changes in snow depth\nPeriods 2015-2020 and 2095-2100\nScenario {scenario}"
                 )
             plt.colorbar(im, label="meters", shrink=0.75)
 
         elif self.var == "tas":
             if scenario == "Historical":
                 ax.set_title(
-                    f"Changes in temperature\nPeriods 1950-1960 and 2005-2015\nScenario {scenario}"
+                    f"Changes in temperature\nPeriods 1950-1955 and 2010-2015\nScenario {scenario}"
                 )
             else:
                 ax.set_title(
-                    f"Changes in temperature\nPeriods 2015-2025 and 2040-2050\nScenario {scenario}"
+                    f"Changes in temperature\nPeriods 2015-2020 and 2095-2100\nScenario {scenario}"
                 )
             plt.colorbar(im, label="C", shrink=0.75)
 
