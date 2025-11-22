@@ -44,11 +44,10 @@ def load_preprocess(path, center_point, buffer, var):
 # ! ###################################
 # ! DATA LOADING
 
-
 # ? scenario_historical
 ds_path_historical = os.path.join(
     os.path.dirname(__file__),
-    "data/near_surface_air_temperature_monthly_historical_cesm2_1950-2015/tas_Amon_CESM2_historical_r1i1p1f1_gn_19500115-20141215.nc",
+    "data/snow_depth_monthly_historical_cesm2_1950-2015/snd_LImon_CESM2_historical_r1i1p1f1_gn_19500115-20141215.nc",
 )
 
 var_historical = os.path.basename(ds_path_historical).split("_")[0]
@@ -64,7 +63,7 @@ if scenario_historical is None:
 # ? scenario_SSP2-4.5
 ds_path_245 = os.path.join(
     os.path.dirname(__file__),
-    "data/near_surface_air_temperature_monthly_ssp2_4_5_cesm2_2015-2050/tas_Amon_CESM2_ssp245_r4i1p1f1_gn_20150115-20501215.nc",
+    "data/snow_depth_monthly_ssp2_4_5_cesm2_2015-2100/snd_LImon_CESM2_ssp245_r4i1p1f1_gn_20150115-21001215.nc",
 )
 
 var_245 = os.path.basename(ds_path_245).split("_")[0]
@@ -75,7 +74,7 @@ scenario_245 = match_scenario(ds_path_245).format()
 # ? scenario_SSP3-7.0
 ds_path_370 = os.path.join(
     os.path.dirname(__file__),
-    "data/near_surface_air_temperature_monthly_ssp3_7_0_cesm2_2015-2050/tas_Amon_CESM2_ssp370_r4i1p1f1_gn_20150115-20501215.nc",
+    "data/snow_depth_monthly_ssp3_7_0_cesm2_2015-2100/snd_LImon_CESM2_ssp370_r4i1p1f1_gn_20150115-21001215.nc",
 )
 
 var_370 = os.path.basename(ds_path_370).split("_")[0]
@@ -106,7 +105,7 @@ latitudes = ds_historical["lat"]
 # ! -------------
 # ? Creation of 30-year mean for long-term change assessment
 base_year_historical = (
-    ds_historical.resample(time="10YE").mean(dim="time").groupby("time.season")["DJF"]
+    ds_historical.resample(time="5YE").mean(dim="time").groupby("time.season")["DJF"]
 )
 difference = base_year_historical[-1] - base_year_historical[0]
 mask = np.isfinite(difference)
@@ -115,7 +114,7 @@ toplot_historical = PlotObject(difference, var_historical)
 
 
 base_year_245 = (
-    ds_245.resample(time="10YE").mean(dim="time").groupby("time.season")["DJF"]
+    ds_245.resample(time="5YE").mean(dim="time").groupby("time.season")["DJF"]
 )
 difference = base_year_245[-1] - base_year_245[0]
 mask = np.isfinite(difference)
@@ -123,7 +122,7 @@ difference = xr.where(mask, difference, 0)
 toplot_245 = PlotObject(difference, var_245)
 
 base_year_370 = (
-    ds_370.resample(time="10YE").mean(dim="time").groupby("time.season")["DJF"]
+    ds_370.resample(time="5YE").mean(dim="time").groupby("time.season")["DJF"]
 )
 difference = base_year_370[-1] - base_year_370[0]
 mask = np.isfinite(difference)
@@ -153,31 +152,31 @@ toplot_370.create_map(
 
 ds_historical_filtered = (
     ds_historical.resample(time="QS-DEC")
-    .max(
+    .mean(
         
     )[::4]
-    .max( dim=["lat", "lon"])
+    .mean( dim=["lat", "lon"])
 )
 ds_245_filtered = (
     ds_245.resample(time="QS-DEC")
-    .max(
+    .mean(
         
     )[::4]
-    .max( dim=["lat", "lon"])
+    .mean( dim=["lat", "lon"])
 )
 ds_hist_245_filtered = (
     ds_hist_245.resample(time="QS-DEC")
-    .max(
+    .mean(
         
     )[::4]
-    .max( dim=["lat", "lon"])
+    .mean( dim=["lat", "lon"])
 )
 ds_370_filtered = (
     ds_370.resample(time="QS-DEC")
-    .max(
+    .mean(
         
     )[::4]
-    .max( dim=["lat", "lon"])
+    .mean( dim=["lat", "lon"])
 )
 
 years_hist_245 = ds_hist_245_filtered.time.dt.year
@@ -186,22 +185,23 @@ years_245 = ds_245_filtered.time.dt.year
 years_370 = ds_370_filtered.time.dt.year
 
 years_245_n = np.arange(min(years_245), max(years_245)+1)
-coeff_245 = np.polyfit(years_245, ds_245_filtered, deg=1)
-trend_245 = coeff_245[0]*years_245_n + coeff_245[1]
+coeff_245 = np.polyfit(years_245, ds_245_filtered, deg=5)
+trend_245 = np.polyval(coeff_245, years_245_n)
+# trend_245 = coeff_245[0]*years_245_n + coeff_245[1]
 
 years_370_n = np.arange(min(years_370), max(years_370)+1)
-coeff_370 = np.polyfit(years_370, ds_370_filtered, deg=1)
-trend_370 = coeff_370[0]*years_370_n + coeff_370[1]
+coeff_370 = np.polyfit(years_370, ds_370_filtered, deg=5)
+trend_370 = np.polyval(coeff_370, years_370_n)
+# trend_370 = coeff_370[0]*years_370_n + coeff_370[1]
 
 fig = plt.figure(figsize=(12,6))
 
-plt.plot()
 # plt.plot(years_hist_245, ds_hist_245_filtered, "oy-", lw=1.5, label="Historical + SSP2-4.5")
-plt.plot(years_245, trend_245, "g--", lw=1.5)
-plt.plot(years_370, trend_370, "b--", lw=1.5)
-plt.plot(years_historical, ds_historical_filtered, "ok-", alpha=0.5, lw=1.5, label="Historical")
-plt.plot(years_245, ds_245_filtered, "og-", alpha=0.5, lw=1.5, label="SSP2-4.5")
-plt.plot(years_370, ds_370_filtered, "ob-", alpha=0.5, lw=1.5, label="SSP3-7.0")
+plt.plot(years_245, trend_245, "y--", lw=1.5)
+plt.plot(years_370, trend_370, "r--", lw=1.5)
+plt.plot(years_historical, ds_historical_filtered, "ok-", ms=5, alpha=0.5, lw=1.5, label="Historical")
+plt.plot(years_245, ds_245_filtered, "y-", alpha=0.5, lw=0.75, label="SSP2-4.5")
+plt.plot(years_370, ds_370_filtered, "r-", alpha=0.5, lw=0.75, label="SSP3-7.0")
 plt.xlabel("Year")
 
 if var_historical == "snd":
