@@ -36,18 +36,58 @@
 	\vspace{0.25cm}
 	\large{Author: Jesus Ochoa-Contreras} \\
 	\vspace{0.25cm}
-	\large{Fall 2025 - October 21, 2025} \\
-	
-	\vspace{1cm}
-	\large{\textbf{\textit{Project proposal}}}
+	\large{\textbf{Fall 2025 - December 4, 2025}} \\
+
 \end{center}
 
 
 \section{Introduction}
 
+The IPCC (Intergovernmental Panel on Climate Change) was created by the United Nations Environment Programme on 1988, dedicated to provide policymakers with regular scientific assessments on climate change, critical to prepare for potential climate risks and to develop mitigation and adaptation strategies for companies and governments all over the world. The IPCC does not conduct its own research, rather it identifies where there is agreement on the scientific comunity about climate change, reporting it neutrally but staying policy-relevant \parencite{ipcc}.
 
+A climate scenario is an assumption about political changes and their effect on climate change. There are multiple climate scenarios described after the Shared Socio-economic Pathways (SSP), which include plausible socio-political and technological scenarios and its consequences on every variable playing a role on climate change. Under the Coupled Model Intercomparison Project Phase 6 (CMIP6) and through Copernicus Climate Data Store, multiple climate variables are available for free download as gridded data for historic or SSP experiments \parencite{cmip6_ca}.
+
+This project will be focusing on the reduction of snow depth in Newfoundland and Labrador, Canada, since climate change and generalized global warming have imposed increasing stress on the accumulation of snow, crucial for climate regulation.
 
 \section{Methodology}
+
+The download of the data can be made through two methods: direct download from the webpage, selecting the appropriate parameters, which are the ones in the list below, or through an API call.
+\begin{itemize}
+	\item Temporal resolution: either daily, monthly, yearly or fixed. Depends on the dataset.
+	\item Experiment: one of the multiple available climate scenarios.
+	\item Variable: the desired climate variable.
+	\item Level: atmospheric height in hPa, may not be available for all variables.
+	\item Model: the computational model used to obtain the variable. Not all models contain all variables.
+	\item Year: year range for the data, from 1850 to 2300.
+	\item Month: month range for the data.
+	\item Day: day range for the data.
+	\item Geographical area: bounding geographical coordinates of interest.
+\end{itemize}
+
+The methodology used in this project is the API call, since it is a programmatic way to easily get data from the database. The webpage offers the exact call we need to make to the API in order to download specific data, and following the pattern we can program a class that allows us to enter the parameters in the form of strings or vectors for ranges and get back the right data. Once downloaded, the data comes in NetCDF format, which is a very efficient format to carry large amounts of data in a relatively small file size. 
+
+The variables obtained through the API call are as follow:
+\begin{itemize}
+	\item Near-surface air temperature
+	\item Snow depth
+\end{itemize}
+
+All of the data is downloaded for the climate scenarios called Nationally Determined Contributions (NDC, SSP2-4.5) and Current Policies (SSP3-7.0). The scenario names NDC and Current Policies are based in the nomenclature by the Network for Greening the Financial System \parencite{ngfs_scenarios}, and the codes SSP2-4.5 and SSP3-7.0 are named under the Shared Socioeconomic Pathways as defined in the Intergovernmental Panel on Climate Change sixth assessment in 2023 \parencite{ipcc_report}. These two scenarios are chosen because they are the two more likely scenarios to become reality.
+
+To load such data, we aid ourselves with the Python library \texttt{Xarray}, which is designed to handle large datasets, often with special functions for climate science, while keeping compatibility with numerical and data handling libraries like Numpy and Pandas. Xarray follows more closely the conventions used by Pandas, using as a base object the so-called \texttt{DataArray}, which behaves similar to a Pandas \texttt{DataFrame}. The main difference is that in DataArrays, each point is associated with a set of coordinates, either spatial or time coordinates, so we can retrieve the data for a specific goegraphical point with precision.
+
+It is worth noting that many of the available models are inherently different in how they organize the data inside the files, especially the coordinate naming conventions. For example, the model CESM2 (USA) uses names such as \texttt{lon} and \texttt{lat} for the longitude and latitude coordinates, and vectors ranging from -90 to 90 for latitude and from 0 to 360 for longitude, which are easy to work with. Other models uses an "ij" indexing system, which contains a meshgrid for the coordinates that makes it more difficult to access. That is why we select the model CESM2 (USA) for all variables. 
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{Fig/CMIP_allModels.png}
+	\caption{Results for all 34 available models on the CMIP Yearly Mean Temperature. Each line represents a model}
+	\label{fig:all_models}
+\end{figure}
+Different models give slightly different results for the same variable, and choosing one near the average value is crucial. The model CESM2 (USA) is one of these, visible in Figure \ref{fig:all_models} in a slightly bolder line other than the mean value.
+
+
+\section{Results}
 
 
 \printbibliography
