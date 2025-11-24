@@ -86,9 +86,72 @@ It is worth noting that many of the available models are inherently different in
 \end{figure}
 Different models give slightly different results for the same variable, and choosing one near the average value is crucial. The model CESM2 (USA) is one of these, visible in Figure \ref{fig:all_models} in a slightly bolder line other than the mean value.
 
+The final data thus is composed of near-surface air temperature and snow depth for the entire world, with a spatial resolution of 1 degree by 1 degree per pixel, monthly for the years 1950-2015 for the historical records and 2015-2100 for the projections. Despite being 2025 as of the writing of this report, the experiments run by the CMIP6 were created during 2016 and has been the last cutoff of modelling. 
+
+There are many ways to visualize this data, but being 2D data, one of the most intuitive is create maps, overlayed on the outline of the countries to provide a frame of reference. The data for the world boundaries can be obtained as an ESRI Shapefile from public datasets \parencite{wbounds} and loaded using the Python library Geopandas, which is especially designed to handle geographical data. The Shapefile format is made of a table of attributes, so it can be thought of a DataFrame with location and geometry attributes, perfectly readable by a library like Geopandas, and loaded to a map to draw the lines of the countries boundaries, which will be the primary basemap.
+
+To create a comparison of the changes across the years on the climate variables we are using, we need to get rid of possible outliers in the data by taking the mean over the winter season. We choose the winter because snow concentration only happens in this season, and including other seasons could bias the results. To select only the winter season, we select the months December, January and February, discard the rest and then take the 5 year average, creating multiple 5-year periods that are easier to compare to one another and eliminating unuseful data in the process. We perform this operation for all the datasets, historical and projected.
+
+To ease the creation of maps for multiple datasets, we create a class that allows us to pass the data and create figures from it afterwards by calling a simple function. The class is called \texttt{PlotObject} and takes an Xarray as input, and the variables and appropriate colormaps or ranges are automatically extracted from the input array.
+
+Apart from creating maps, we can look at the timeseries of the yearly average concentration of snow in the whole area of interest, comparing how it has changed over the years and how it is projected to change under the different climate scenarios. We create line plots that show
 
 \section{Results}
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.75\textwidth]{Fig/map_snow_hist.png}
+	\caption{Historical 5-year average snow depth changes from 1950 to 2015}
+	\label{fig:map_snow_hist}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.75\textwidth]{Fig/map_snow_245.png}
+	\caption{Historical 5-year average snow depth changes towards 2100 under the climate scenario SSP2-4.5}
+	\label{fig:map_snow_245}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.75\textwidth]{Fig/map_snow_370.png}
+	\caption{5-year average snow depth changes towards 2100 under the climate scenario SSP3-7.0}
+	\label{fig:map_snow_370}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.75\textwidth]{Fig/snow_change_timeseries.png}
+	\caption{Yearly average snow depth in Atlantic Canada, showing the projections of two different climate scenarios.}
+	\label{fig:snow_change_timeseries}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.75\textwidth]{Fig/map_temp_hist.png}
+	\caption{Historical 5-year average temperature changes from 1950 to 2015}
+	\label{fig:map_temp_hist}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.75\textwidth]{Fig/map_temp_245.png}
+	\caption{Historical 5-year average temperature changes towards 2100 under the climate scenario SSP2-4.5}
+	\label{fig:map_temp_245}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.75\textwidth]{Fig/map_temp_370.png}
+	\caption{5-year average temperature changes towards 2100 under the climate scenario SSP3-7.0}
+	\label{fig:map_temp_370}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.75\textwidth]{Fig/temp_timeseries.png}
+	\caption{Yearly average temperature in Atlantic Canada, showing the projections of two different climate scenarios.}
+	\label{fig:temp_change_timeseries}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{Fig/regplot.png}
+	\caption{Linear regression plot of temperature vs snow depth. Notice the inverse relationship.}
+	\label{fig:regplot}
+\end{figure}
 
 \printbibliography
 
