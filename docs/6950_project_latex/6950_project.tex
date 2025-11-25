@@ -168,14 +168,21 @@ For the hot scenario (SSP3-7.0) in Figure \ref{fig:map_temp_370} we can see a ve
 
 The changes in temperature over the years can be seen more clearly in Figure \ref{fig:temp_change_timeseries}, which contains the yearly average temperature for the region in the maps from 1950 to 2015 for observed data, and from 2015 to 2100 for projected data under the two proposed scenarios. We can observe in this figure that the temperature has seen a steady increase since 1950 and follows the same pattern until around 2060 for both scenarios, where we start to see some difference between them. In the case of the hot scenario, the temperature starts increasing rapidly until it reaches an average of just above 0 degrees; on the other hand, the warm scenario starts to see a decrease in the rate of rising temperature in the last two decades of the century, attributable to the efforts in reducing carbon emissions to the atmosphere.
 
-Even though we see in the warm scenario that a reduction of temperature is possible, the effects are already too strong to ignore, driving an average temperature increase around 6°C from a century before.
+Even though we see in the warm scenario that a reduction of temperature is possible, the effects are already too strong to ignore, driving an average temperature increase to around 10°C from a century before.
 
+So far, we have seen a steep decrease in the observed and projected snow depth in much of the area of interest, and a steep increase in the average temperature, from which we can conclude that there is an inverse relationship between those variables, i.e., the higher the temperature, the lower the snow depth. To quantify this relationship, we can resort to a least squares linear fitting to get a mathematical model that allows us to estimate the snow depth as a function of temperature. We create a regression plot using the library Seaborn with all our datapoints on the historical records in the area of interest. 
 \begin{figure}
 	\centering
 	\includegraphics[width=\textwidth]{Fig/regplot2.png}
 	\caption{Linear regression plot of snow depth vs temperature. Notice the inverse relationship and snow depth values going to zero when temperatures go above zero}
 	\label{fig:regplot2}
 \end{figure}
+
+In Figure \ref{fig:regplot2} we can see the results of the linear fitting with all the data points (1 data point per pixel), showing a very clear inverse relationship between the two variables. We can see that as the temperature approaches to zero, so does the snow depth, and on temperatures above 10°C there are no data points for snow depth, meaning snow cannot exist in those temperatures. On the other extreme, we rarely see temperatures lower than -38°C in this specific region.
+
+\section{Conclusion}
+
+
 
 \printbibliography
 
