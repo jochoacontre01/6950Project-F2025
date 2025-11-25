@@ -94,7 +94,9 @@ To create a comparison of the changes across the years on the climate variables 
 
 To ease the creation of maps for multiple datasets, we create a class that allows us to pass the data and create figures from it afterwards by calling a simple function. The class is called \texttt{PlotObject} and takes an Xarray as input, and the variables and appropriate colormaps or ranges are automatically extracted from the input array.
 
-Apart from creating maps, we can look at the timeseries of the yearly average concentration of snow in the whole area of interest, comparing how it has changed over the years and how it is projected to change under the different climate scenarios. We create line plots that show
+Apart from creating maps, we can look at the timeseries of the yearly average concentration of snow in the whole area of interest, comparing how it has changed over the years and how it is projected to change under the different climate scenarios. We create line plots that show the trend of these variables, with solid lines and/or dots for the actual data points and dashed lines for polynomial fit on the time series. We chose to perform polynomial fitting to show with more clarity the trend of the future scenarios, where a polynomial of order 5 shows the details of such trend, as a linear or even quadratic fitting would not capture the exact behavior, leaving important trends behind.
+
+Finally, to study the relationship between the temperature and the snow depth, we create what is called a regression plot, where we adjust a line using least squares to generate a model that would describe one variable as a function of another, in this case the snow depth as a function of temperature. The expected result is to be an inverse relationship, i.e., the higher the temperature, the lower the snow depth, remembering that we are taking average yearly values in the winter season, where the concentration of snow would be higher.
 
 \section{Results}
 
@@ -116,12 +118,24 @@ Apart from creating maps, we can look at the timeseries of the yearly average co
 	\caption{5-year average snow depth changes towards 2100 under the climate scenario SSP3-7.0}
 	\label{fig:map_snow_370}
 \end{figure}
+
+The results of the creation of the maps for the snow depth change over time from a fixed reference point, can be seen in Figures \ref{fig:map_snow_hist}, \ref{fig:map_snow_245} and \ref{fig:map_snow_370}. All maps have been normalized to the maximum and minimum values of the three datasets to ensure a fair visual comparison between them, however, the lower limit has been capped to increase the visual detail, since in regions like Greenland the snow depth decays so strong that all other regions become invisible.
+
+We can see in Figure \ref{fig:map_snow_hist} that the change in snow depth since 1950 has been significant in northern regions like north Quebec and Nunavut, going below 70 cm less than the reference period. In some other regions, like Bonavista, NL, it has increased slightly. 
+
+In Figure \ref{fig:map_snow_245} we see the changes from the current conditions to 2100 under the warm scenario (SSP2-4.5), where we observe a generalized decrease in all regions except for small areas in Nunavut. Although the difference is not as big as the case in Figure \ref{fig:map_snow_hist}, we need to remember that this change is on top of the already lost snow depth historically, so we could be looking at reduction of up to 80 cm in snow depth if we follow the trend of this scenario.
+
+Another scenario, that the actual trends follow more closely, the hot scenario (SSP3-7.0), we see an even more drastic reduction of snow depth all over Canada, seen in Figure \ref{fig:map_snow_370}. Even though the reduction amount is almost the same as that in Figure \ref{fig:map_snow_245}, here it is spread all over the country, and there is no areas with increased or even the same snow depth we get today. This behavior could have catastrophic consequences for environment and global temperature regulation, but sadly it is what we are going towards with the curren policies and actions.
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.75\textwidth]{Fig/snow_change_timeseries.png}
 	\caption{Yearly average snow depth in Atlantic Canada, showing the projections of two different climate scenarios.}
 	\label{fig:snow_change_timeseries}
 \end{figure}
+
+To understand how these scenarios compare to each other more closely, we can look at Figure \ref{fig:snow_change_timeseries}, where we have a timeseries of the average snow depth during winter on the region in the maps. We see that since around 1980 the trend has been going down drastically, and it is projected to follow that trend over the next 75 years, falling increasingly hard after 2060 in the hot scenario. This could lead to almos total lack of snow during winter time in much of Atlantic Canada.
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.75\textwidth]{Fig/map_temp_hist.png}
@@ -140,17 +154,27 @@ Apart from creating maps, we can look at the timeseries of the yearly average co
 	\caption{5-year average temperature changes towards 2100 under the climate scenario SSP3-7.0}
 	\label{fig:map_temp_370}
 \end{figure}
+
+Similar to snow depth, we can also look at the changes in temperature in the same time frames and regions, a main driver for the changes in snow concentration. We see in Figure \ref{fig:map_temp_hist} that we already have an increase in temperature in all regions from 1950 to 2015, with more concentration on the regions where we saw less snow in recent years (north Quebec, Nunavut), averaging 1-2 degrees celsius in most regions. When we look at the map in Figure \ref{fig:map_temp_245}, corresponding to the warm scenario (SSP2-4.5), we find that most of the continental area is still getting warmer by around 4°C, but the artic ocean and coasts of Greenland appear to become colder by less than a degree. Remembering this map is a comparison between the current conditions and the years 2095-2100, we find this cooling to be an improvement over the rest of the areas.
+
+For the hot scenario (SSP3-7.0) in Figure \ref{fig:map_temp_370} we can see a very intense warming in all regions, with maximums of up to 7.5°C compared to today's conditions, meaning we could stop seeing below zero temperatures during winter in some regions that have had it historically, plummeting snow depths.
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.75\textwidth]{Fig/temp_timeseries.png}
 	\caption{Yearly average temperature in Atlantic Canada, showing the projections of two different climate scenarios.}
 	\label{fig:temp_change_timeseries}
 \end{figure}
+
+The changes in temperature over the years can be seen more clearly in Figure \ref{fig:temp_change_timeseries}, which contains the yearly average temperature for the region in the maps from 1950 to 2015 for observed data, and from 2015 to 2100 for projected data under the two proposed scenarios. We can observe in this figure that the temperature has seen a steady increase since 1950 and follows the same pattern until around 2060 for both scenarios, where we start to see some difference between them. In the case of the hot scenario, the temperature starts increasing rapidly until it reaches an average of just above 0 degrees; on the other hand, the warm scenario starts to see a decrease in the rate of rising temperature in the last two decades of the century, attributable to the efforts in reducing carbon emissions to the atmosphere.
+
+Even though we see in the warm scenario that a reduction of temperature is possible, the effects are already too strong to ignore, driving an average temperature increase around 6°C from a century before.
+
 \begin{figure}
 	\centering
-	\includegraphics[width=\textwidth]{Fig/regplot.png}
-	\caption{Linear regression plot of temperature vs snow depth. Notice the inverse relationship.}
-	\label{fig:regplot}
+	\includegraphics[width=\textwidth]{Fig/regplot2.png}
+	\caption{Linear regression plot of snow depth vs temperature. Notice the inverse relationship and snow depth values going to zero when temperatures go above zero}
+	\label{fig:regplot2}
 \end{figure}
 
 \printbibliography
