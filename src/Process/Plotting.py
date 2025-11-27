@@ -34,7 +34,7 @@ class PlotObject:
             self.longitudes = data["lon"]
             self.latitudes = data["lat"]
 
-    def create_map(self, scenario, cpoint, buffer):
+    def create_map(self, scenario, cpoint, buffer, save_to=None, **kwargs):
         if self.data.ndim < 2:
             raise ValueError(
                 f"Cannot create a map with data of shape {self.data.shape}"
@@ -51,12 +51,14 @@ class PlotObject:
         world_boundaries.plot(
             linewidth=0.75, edgecolor="k", facecolor="#00000000", ax=ax
         )
+
         vmax = np.amax(self.data)
         vmin = -vmax
         norm = TwoSlopeNorm(0, vmin, vmax)
 
         if self.var == "snd":
             cmap = "PuOr"
+            self.data = xr.where(self.data == 0, np.nan, self.data)
         elif self.var == "tas":
             cmap = cm.balance
 
@@ -70,9 +72,8 @@ class PlotObject:
                 np.amin(self.latitudes),
                 np.amax(self.latitudes),
             ),
-            norm=norm,
-            interpolation="bicubic",
-            interpolation_stage="rgba",
+            norm=norm if not kwargs else None,
+            **kwargs
         )
         ax.set_xlabel("Longitude")
         ax.set_ylabel("Latitude")
@@ -80,22 +81,22 @@ class PlotObject:
         if self.var == "snd":
             if scenario == "Historical":
                 ax.set_title(
-                    f"Changes in snow depth\nPeriods 1950-1955 and 2010-2015\nScenario {scenario}"
+                    f"Changes in snow depth\nPeriods 1950-1955 against 2010-2015\nScenario {scenario}"
                 )
             else:
                 ax.set_title(
-                    f"Changes in snow depth\nPeriods 2015-2020 and 2095-2100\nScenario {scenario}"
+                    f"Changes in snow depth\nPeriods 2015-2020 against 2095-2100\nScenario {scenario}"
                 )
             plt.colorbar(im, label="meters", shrink=0.75)
 
         elif self.var == "tas":
             if scenario == "Historical":
                 ax.set_title(
-                    f"Changes in temperature\nPeriods 1950-1955 and 2010-2015\nScenario {scenario}"
+                    f"Changes in temperature\nPeriods 1950-1955 against 2010-2015\nScenario {scenario}"
                 )
             else:
                 ax.set_title(
-                    f"Changes in temperature\nPeriods 2015-2020 and 2095-2100\nScenario {scenario}"
+                    f"Changes in temperature\nPeriods 2015-2020 against 2095-2100\nScenario {scenario}"
                 )
             plt.colorbar(im, label="C", shrink=0.75)
 
@@ -103,4 +104,6 @@ class PlotObject:
         ax.set_ylim(cpoint[0] - buffer * 0.98, cpoint[0] + buffer * 0.98)
 
         plt.tight_layout()
+        if save_to is not None:
+            plt.savefig(save_to)
         plt.show()
