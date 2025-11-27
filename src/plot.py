@@ -9,7 +9,7 @@ import matplotlib
 import sys
 import os
 
-from Process.GeometricProcessing import crop, adjust_coords
+from Process.GeometricProcessing import crop, adjust_coords, load_preprocess
 from Process.StringOps import match_scenario
 from Process.Plotting import PlotObject
 
@@ -20,28 +20,11 @@ matplotlib.rcParams.update({"font.size": 16})
 # ! Point of analysis (about central Newfoundland) as (lat, lon)
 interest_point = [55.37437902920724, -60.67567886857576]
 buffer_deg = 15.0
+
 savepath = os.path.join(
     os.path.dirname(os.path.dirname(__file__)), "docs/6950_project_latex/Fig"
 )
 
-
-def load_preprocess(path, center_point, buffer, var):
-    bbox = [
-        center_point[0] - buffer,
-        center_point[0] + buffer,
-        center_point[1] - buffer,
-        center_point[1] + buffer,
-    ]
-
-    # ! Load dataset with xarray and perform basic preprocessing
-    ds = xr.load_dataset(path, engine="h5netcdf")[var]
-    if var == "tas":
-        ds = ds - 273.15
-    ds = adjust_coords(ds)
-    ds = crop(ds, *bbox)
-    ds += 1e-15  # ? Add stability constant
-
-    return ds
 
 
 # ! ###################################
@@ -135,42 +118,44 @@ toplot_370 = PlotObject(difference, var_370)
 # ! ###################################
 # ! MAP PLOTTING
 
-vmin = np.amin(np.stack([toplot_historical.data.values, toplot_245.data.values, toplot_370.data.values]).flatten())
-vmax = np.amax(np.stack([toplot_historical.data.values, toplot_245.data.values, toplot_370.data.values]).flatten())
+vmax = np.amax(
+    np.stack(
+        [toplot_historical.data.values, toplot_245.data.values, toplot_370.data.values]
+    ).flatten()
+)
 vmin = -vmax
 
 toplot_historical.create_map(
     scenario="Historical",
     cpoint=interest_point,
     buffer=buffer_deg,
-    # save_to=savepath + "/map_temp_hist.png",
-    
+    save_to=savepath + "/map_temp_hist.png" if os.path.exists(savepath) else None,
     vmin=vmin,
     vmax=vmax,
-    interpolation='bicubic',
-    interpolation_stage='rgba'
+    interpolation="bicubic",
+    interpolation_stage="rgba",
 )
 
 toplot_245.create_map(
     scenario="SSP2-4.5",
     cpoint=interest_point,
     buffer=buffer_deg,
-    # save_to=savepath + "/map_temp_245.png",
+    save_to=savepath + "/map_temp_245.png" if os.path.exists(savepath) else None,
     vmin=vmin,
     vmax=vmax,
-    interpolation='bicubic',
-    interpolation_stage='rgba'
+    interpolation="bicubic",
+    interpolation_stage="rgba",
 )
 
 toplot_370.create_map(
     scenario="SSP3-7.0",
     cpoint=interest_point,
     buffer=buffer_deg,
-    # save_to=savepath + "/map_temp_370.png",
+    save_to=savepath + "/map_temp_370.png" if os.path.exists(savepath) else None,
     vmin=vmin,
     vmax=vmax,
-    interpolation='bicubic',
-    interpolation_stage='rgba'
+    interpolation="bicubic",
+    interpolation_stage="rgba",
 )
 
 # map_plot(toplot_370, scenario_370)
@@ -205,8 +190,8 @@ trend_370 = np.polyval(coeff_370, years_370_n)
 fig = plt.figure(figsize=(12, 6))
 
 # plt.plot(years_hist_245, ds_hist_245_filtered, "oy-", lw=1.5, label="Historical + SSP2-4.5")
-plt.plot(years_245, trend_245, c='orange', ls="--", lw=1.5)
-plt.plot(years_370, trend_370, c='r', ls="--", lw=1.5)
+plt.plot(years_245, trend_245, c="orange", ls="--", lw=1.5)
+plt.plot(years_370, trend_370, c="r", ls="--", lw=1.5)
 plt.plot(
     years_historical,
     ds_historical_filtered,
@@ -217,7 +202,7 @@ plt.plot(
     label="Historical",
 )
 plt.plot(years_245, ds_245_filtered, c="orange", alpha=0.5, lw=0.75, label="SSP2-4.5")
-plt.plot(years_370, ds_370_filtered, c='r', alpha=0.5, lw=0.75, label="SSP3-7.0")
+plt.plot(years_370, ds_370_filtered, c="r", alpha=0.5, lw=0.75, label="SSP3-7.0")
 plt.xlabel("Year")
 
 if var_historical == "snd":
