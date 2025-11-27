@@ -1,9 +1,11 @@
+#%%
+
 import xarray as xr
 import matplotlib.pyplot as plt
 from matplotlib.colors import TwoSlopeNorm
 import numpy as np
 import geopandas as gpd
-import addcopyfighandler
+# import addcopyfighandler
 import scienceplots
 import matplotlib
 import sys
@@ -26,7 +28,6 @@ savepath = os.path.join(
 )
 
 
-
 # ! ###################################
 # ! DATA LOADING
 
@@ -36,14 +37,12 @@ ds_path_historical = os.path.join(
     "data/snow_depth_monthly_historical_cesm2_1950-2015/snd_LImon_CESM2_historical_r1i1p1f1_gn_19500115-20141215.nc",
 )
 
-var_historical = os.path.basename(ds_path_historical).split("_")[0]
 ds_historical = load_preprocess(
-    ds_path_historical, interest_point, buffer_deg, var_historical
+    ds_path_historical, interest_point, buffer_deg
 )
-
-scenario_historical = match_scenario(ds_path_historical).format()
-if scenario_historical is None:
-    scenario_historical = "Historical"
+scenario_historical = ds_historical.scenario
+var_historical = ds_historical.var
+ds_historical = ds_historical.ds
 
 
 # ? scenario_SSP2-4.5
@@ -52,9 +51,10 @@ ds_path_245 = os.path.join(
     "data/snow_depth_monthly_ssp2_4_5_cesm2_2015-2100/snd_LImon_CESM2_ssp245_r4i1p1f1_gn_20150115-21001215.nc",
 )
 
-var_245 = os.path.basename(ds_path_245).split("_")[0]
-ds_245 = load_preprocess(ds_path_245, interest_point, buffer_deg, var_245)
-scenario_245 = match_scenario(ds_path_245).format()
+ds_245 = load_preprocess(ds_path_245, interest_point, buffer_deg)
+scenario_245 = ds_245.scenario
+var_245 = ds_245.var
+ds_245 = ds_245.ds
 
 
 # ? scenario_SSP3-7.0
@@ -63,15 +63,16 @@ ds_path_370 = os.path.join(
     "data/snow_depth_monthly_ssp3_7_0_cesm2_2015-2100/snd_LImon_CESM2_ssp370_r4i1p1f1_gn_20150115-21001215.nc",
 )
 
-var_370 = os.path.basename(ds_path_370).split("_")[0]
-ds_370 = load_preprocess(ds_path_370, interest_point, buffer_deg, var_370)
-scenario_370 = match_scenario(ds_path_370).format()
+ds_370 = load_preprocess(ds_path_370, interest_point, buffer_deg)
+scenario_370 = ds_370.scenario
+var_370 = ds_370.var
+ds_370 = ds_370.ds
 
 scenarios = [scenario_historical, scenario_245, scenario_370]
 
 ds_hist_245 = xr.concat([ds_historical, ds_245], dim="time")
 
-
+#%%
 # ! ###################################
 # ! Load world bounds dataset
 wbound_path = os.path.join(
@@ -158,6 +159,7 @@ toplot_370.create_map(
     interpolation_stage="rgba",
 )
 
+#%%
 # map_plot(toplot_370, scenario_370)
 
 # ! -------------
