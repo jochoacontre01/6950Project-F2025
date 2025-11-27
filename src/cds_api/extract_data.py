@@ -11,6 +11,7 @@ class CDSData:
         self.dataset = dataset
         self.request = request
         self.out_file = None
+        self.deprecate() 
 
     def deprecate():
         warn(
@@ -20,7 +21,6 @@ class CDSData:
             stacklevel=2
         )
 
-    deprecate()
     
     def make_request(self, out=None, overwrite=False):
         if out is None:
