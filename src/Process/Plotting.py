@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import geopandas as gpd
-from matplotlib.colors import TwoSlopeNorm
+from matplotlib.colors import TwoSlopeNorm, SymLogNorm
 from warnings import warn
 import xarray as xr
 from cmocean import cm
+from shapely.geometry import Polygon
 
 
 wbound_path = os.path.join(
@@ -34,7 +35,7 @@ class PlotObject:
             self.longitudes = data["lon"]
             self.latitudes = data["lat"]
 
-    def create_map(self, scenario, cpoint, buffer, save_to=None, **kwargs):
+    def create_map(self, scenario, cpoint, buffer, save_to=None, log=False, **kwargs):
         if self.data.ndim < 2:
             raise ValueError(
                 f"Cannot create a map with data of shape {self.data.shape}"
@@ -48,13 +49,29 @@ class PlotObject:
         fig = plt.figure(figsize=(9, 9))
         ax = fig.add_subplot()
 
+        map_extent = Polygon([
+            (np.amin(self.longitudes), np.amin(self.latitudes)),
+            (np.amax(self.longitudes), np.amin(self.latitudes)),
+            (np.amax(self.longitudes), np.amax(self.latitudes)),
+            (np.amin(self.longitudes), np.amax(self.latitudes)),
+        ])
+
+        land_geom = world_boundaries.union_all()
+
+        water_geom = map_extent.difference(land_geom)
+        gpd.GeoSeries(water_geom).plot(ax=ax, color='#a6cee3', zorder=1)
+
         world_boundaries.plot(
-            linewidth=0.75, edgecolor="k", facecolor="#00000000", ax=ax
+            linewidth=0.5, edgecolor="#000000", facecolor="#00000000", ax=ax
         )
 
-        vmax = np.amax(self.data)
-        vmin = -vmax
-        norm = TwoSlopeNorm(0, vmin, vmax)
+        if "vmin" not in list(kwargs.keys()):
+            vmax = np.quantile(self.data, 0.75)
+            vmin = -vmax
+        else:
+            vmin = kwargs["vmin"]
+            vmax = kwargs["vmax"]
+        norm = TwoSlopeNorm(0, vmin, vmax) if not log else SymLogNorm(vmin=vmin, vmax=vmax, linthresh=1E-3)
 
         if self.var == "snd":
             cmap = "PuOr"
@@ -62,6 +79,7 @@ class PlotObject:
         elif self.var == "tas":
             cmap = cm.balance
 
+        print(vmax, vmin)
         im = ax.imshow(
             self.data,
             origin="lower",
@@ -72,7 +90,7 @@ class PlotObject:
                 np.amin(self.latitudes),
                 np.amax(self.latitudes),
             ),
-            norm=norm if not kwargs else None,
+            norm=norm,
             **kwargs
         )
         ax.set_xlabel("Longitude")
