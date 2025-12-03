@@ -11,8 +11,7 @@ import matplotlib
 import sys
 import os
 
-from Process.GeometricProcessing import crop, adjust_coords, load_preprocess
-from Process.StringOps import match_scenario
+from Process.GeometricProcessing import load_preprocess
 from Process.Plotting import PlotObject
 
 plt.style.use(["science", "no-latex"])
@@ -93,6 +92,16 @@ latitudes = ds_historical["lat"]
 base_year_historical = (
     ds_historical.resample(time="5YE").mean(dim="time").groupby("time.season")["DJF"]
 )
+# toplot_base = PlotObject(base_year_historical[0], var_historical)
+# toplot_base.create_map(
+#     scenario="Historical",
+#     cpoint=interest_point,
+#     buffer=buffer_deg,
+#     log=True
+#     # vmin = np.min(toplot_base.data.values),
+#     # vmax = np.max(toplot_base.data.values),
+# )
+
 difference = base_year_historical[-1] - base_year_historical[0]
 mask = np.isfinite(difference)
 difference = xr.where(mask, difference, 0)
@@ -120,9 +129,9 @@ toplot_370 = PlotObject(difference, var_370)
 # ! MAP PLOTTING
 
 vmax = np.amax(
-    np.stack(
+    np.abs(np.stack(
         [toplot_historical.data.values, toplot_245.data.values, toplot_370.data.values]
-    ).flatten()
+    ).flatten())
 )
 vmin = -vmax
 
@@ -130,9 +139,10 @@ toplot_historical.create_map(
     scenario="Historical",
     cpoint=interest_point,
     buffer=buffer_deg,
-    save_to=savepath + "/map_temp_hist.png" if os.path.exists(savepath) else None,
-    vmin=vmin,
-    vmax=vmax,
+    log=True,
+    save_to=savepath + "/map_snow_hist.png" if os.path.exists(savepath) else None,
+    # vmin=vmin,
+    # vmax=vmax,
     interpolation="bicubic",
     interpolation_stage="rgba",
 )
@@ -141,9 +151,10 @@ toplot_245.create_map(
     scenario="SSP2-4.5",
     cpoint=interest_point,
     buffer=buffer_deg,
-    save_to=savepath + "/map_temp_245.png" if os.path.exists(savepath) else None,
-    vmin=vmin,
-    vmax=vmax,
+    log=True,
+    save_to=savepath + "/map_snow_245.png" if os.path.exists(savepath) else None,
+    # vmin=vmin,
+    # vmax=vmax,
     interpolation="bicubic",
     interpolation_stage="rgba",
 )
@@ -152,9 +163,10 @@ toplot_370.create_map(
     scenario="SSP3-7.0",
     cpoint=interest_point,
     buffer=buffer_deg,
-    save_to=savepath + "/map_temp_370.png" if os.path.exists(savepath) else None,
-    vmin=vmin,
-    vmax=vmax,
+    log=True,
+    save_to=savepath + "/map_snow_370.png" if os.path.exists(savepath) else None,
+    # vmin=vmin,
+    # vmax=vmax,
     interpolation="bicubic",
     interpolation_stage="rgba",
 )
