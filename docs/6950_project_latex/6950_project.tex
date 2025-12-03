@@ -1,4 +1,4 @@
-\documentclass[letterpaper, 12pt]{article}
+\documentclass[letterpaper, 10pt]{article}
 
 \usepackage[top=1in, left=1.25in, right=1.25in, bottom=1in]{geometry}
 \usepackage[utf8]{inputenc}
@@ -47,7 +47,9 @@ The IPCC (Intergovernmental Panel on Climate Change) was created by the United N
 
 A climate scenario is an assumption about political changes and their effect on climate change. There are multiple climate scenarios described after the Shared Socio-economic Pathways (SSP), which include plausible socio-political and technological scenarios and its consequences on every variable playing a role on climate change. Under the Coupled Model Intercomparison Project Phase 6 (CMIP6) and through Copernicus Climate Data Store, multiple climate variables are available for free download as gridded data for historic or SSP experiments \parencite{cmip6_ca}.
 
-This project will be focusing on the reduction of snow depth in Newfoundland and Labrador, Canada, since climate change and generalized global warming have imposed increasing stress on the accumulation of snow, crucial for climate regulation.
+This project will be focusing on the reduction of snow depth in Newfoundland and Labrador, Canada, since climate change and generalized global warming have imposed increasing stress on the accumulation of snow, crucial for climate patterns. We will explore the relative changes from historical records to assess the climate stress under two main climate scenarios, one with medium carbon emissions and the other with high carbon emissions.
+
+The medium emissions scenario is the Nationally Determined Contributions (NDC, SSP2-4.5), where we assume all countries implement pledged policies in addition to current policies, reaching a peak warming of 2.3°C by 2100. The high emissions scenario is the Current Policies (SSP3-7.0) that assumes only the existing climate policies remain in place but there is not strengthening of ambition level of these policies, reaching a peak warming of 3.0°C \parencite{ngfs_tech}.
 
 \section{Methodology}
 
@@ -96,6 +98,8 @@ To ease the creation of maps for multiple datasets, we create a class that allow
 
 Apart from creating maps, we can look at the timeseries of the yearly average concentration of snow in the whole area of interest, comparing how it has changed over the years and how it is projected to change under the different climate scenarios. We create line plots that show the trend of these variables, with solid lines and/or dots for the actual data points and dashed lines for polynomial fit on the time series. We chose to perform polynomial fitting to show with more clarity the trend of the future scenarios, where a polynomial of order 5 shows the details of such trend, as a linear or even quadratic fitting would not capture the exact behavior, leaving important trends behind.
 
+An additional insight we can get from the data is that of extreme values, where we try to find what is the first year in the future whose average temperature exceeds the maximum recorded previously. For this, we need to calculate the date corresponding to the maximum recorded temperature, and the average of all the following years. By doing so, we can calculate which year is the first one to break the records consistently.
+
 Finally, to study the relationship between the temperature and the snow depth, we create what is called a regression plot, where we adjust a line using least squares to generate a model that would describe one variable as a function of another, in this case the snow depth as a function of temperature. The expected result is to be an inverse relationship, i.e., the higher the temperature, the lower the snow depth, remembering that we are taking average yearly values in the winter season, where the concentration of snow would be higher.
 
 \section{Results}
@@ -119,13 +123,13 @@ Finally, to study the relationship between the temperature and the snow depth, w
 	\label{fig:map_snow_370}
 \end{figure}
 
-The results of the creation of the maps for the snow depth change over time from a fixed reference point, can be seen in Figures \ref{fig:map_snow_hist}, \ref{fig:map_snow_245} and \ref{fig:map_snow_370}. All maps have been normalized to the maximum and minimum values of the three datasets to ensure a fair visual comparison between them, however, the lower limit has been capped to increase the visual detail, since in regions like Greenland the snow depth decays so strong that all other regions become invisible.
+The results of the creation of the maps for the snow depth change over time from a fixed reference point, can be seen in Figures \ref{fig:map_snow_hist}, \ref{fig:map_snow_245} and \ref{fig:map_snow_370}. All maps have been normalized to the maximum and minimum values of the three datasets to ensure comparable visualization between them, however, the lower limit has been capped to increase the visual detail, since in regions like Greenland the snow depth decays so strongly that all other regions would become invisible.
 
-We can see in Figure \ref{fig:map_snow_hist} that the change in snow depth since 1950 has been significant in northern regions like north Quebec and Nunavut, going below 70 cm less than the reference period. In some other regions, like Bonavista, NL, it has increased slightly. 
+We can see in Figure \ref{fig:map_snow_hist} that the change in snow depth since 1950 has been significant in northern regions like north Quebec and Nunavut, going below 70 cm less than the reference period. In some other regions, like Bonavista, NL, it has seen a slightly increase. 
 
-In Figure \ref{fig:map_snow_245} we see the changes from the current conditions to 2100 under the warm scenario (SSP2-4.5), where we observe a generalized decrease in all regions except for small areas in Nunavut. Although the difference is not as big as the case in Figure \ref{fig:map_snow_hist}, we need to remember that this change is on top of the already lost snow depth historically, so we could be looking at reduction of up to 80 cm in snow depth if we follow the trend of this scenario.
+Comparing the future climate scenarios, in Figure \ref{fig:map_snow_245} we see the changes from the current conditions to 2100 under the medium emissions scenario (SSP2-4.5), where we observe a generalized decrease in all regions except for small areas in Nunavut. Although the difference is not as big as the case in the historical decrease in Figure \ref{fig:map_snow_hist}, we need to remember that this change is on top of the already lost snow depth historically, so we could be looking at reduction of up to 80 cm in snow depth relative to 1950 if we follow the trend of this scenario.
 
-Another scenario, that the actual trends follow more closely, the hot scenario (SSP3-7.0), we see an even more drastic reduction of snow depth all over Canada, seen in Figure \ref{fig:map_snow_370}. Even though the reduction amount is almost the same as that in Figure \ref{fig:map_snow_245}, here it is spread all over the country, and there is no areas with increased or even the same snow depth we get today. This behavior could have catastrophic consequences for environment and global temperature regulation, but sadly it is what we are going towards with the curren policies and actions.
+The scenario that the actual trends follow more closely, the high emissions scenario (SSP3-7.0), we see an even more drastic reduction of snow depth all over Canada, visible in Figure \ref{fig:map_snow_370}. Even though the reduction amount is almost the same as that in Figure \ref{fig:map_snow_245}, the reduction is present all over the country, and there are no areas with increases or even the same snow depth we get today. This behavior could have catastrophic consequences for environment and global temperature regulation, but as the scenario name states it, it is where the current policies are taking us.
 
 \begin{figure}
 	\centering
@@ -134,7 +138,7 @@ Another scenario, that the actual trends follow more closely, the hot scenario (
 	\label{fig:snow_change_timeseries}
 \end{figure}
 
-To understand how these scenarios compare to each other more closely, we can look at Figure \ref{fig:snow_change_timeseries}, where we have a timeseries of the average snow depth during winter on the region in the maps. We see that since around 1980 the trend has been going down drastically, and it is projected to follow that trend over the next 75 years, falling increasingly hard after 2060 in the hot scenario. This could lead to almos total lack of snow during winter time in much of Atlantic Canada.
+To understand how these scenarios compare to each other more closely, we can look at Figure \ref{fig:snow_change_timeseries}, where the timeseries of the average snow depth during winter on the region in the maps is shown. We see that since around 1980 the trend has been going down drastically, and it is projected to continue that trend for the next 75 years, increasing drastically after 2060 in the high emissions scenario. This could lead to a reduction of 50\% in snow depth during winter time in much of Atlantic Canada.
 
 \begin{figure}
 	\centering
@@ -155,9 +159,9 @@ To understand how these scenarios compare to each other more closely, we can loo
 	\label{fig:map_temp_370}
 \end{figure}
 
-Similar to snow depth, we can also look at the changes in temperature in the same time frames and regions, a main driver for the changes in snow concentration. We see in Figure \ref{fig:map_temp_hist} that we already have an increase in temperature in all regions from 1950 to 2015, with more concentration on the regions where we saw less snow in recent years (north Quebec, Nunavut), averaging 1-2 degrees celsius in most regions. When we look at the map in Figure \ref{fig:map_temp_245}, corresponding to the warm scenario (SSP2-4.5), we find that most of the continental area is still getting warmer by around 4°C, but the artic ocean and coasts of Greenland appear to become colder by less than a degree. Remembering this map is a comparison between the current conditions and the years 2095-2100, we find this cooling to be an improvement over the rest of the areas.
+Similar to snow depth, we can also look at the changes in temperature in the same time frames and regions, a main driver for the change in snow concentration. We see in Figure \ref{fig:map_temp_hist} that the temperature have already increased in all regions from 1950 to 2015, with more concentration on the regions where we encountered a greater loss of snow in recent years (north Quebec, Nunavut), averaging 1-2 degrees celsius in most regions. When we compare against the medium emissions scenario map in Figure \ref{fig:map_temp_245}, we find that most of the continental area will continue to get warmer by around 4°C from today.
 
-For the hot scenario (SSP3-7.0) in Figure \ref{fig:map_temp_370} we can see a very intense warming in all regions, with maximums of up to 7.5°C compared to today's conditions, meaning we could stop seeing below zero temperatures during winter in some regions that have had it historically, plummeting snow depths.
+For the high emissions scenario (SSP3-7.0) in Figure \ref{fig:map_temp_370} we can see a very intense warming in all regions, with maximums of up to 7.5°C compared to today's conditions, meaning we could stop seeing below zero temperatures altogether during winter in some regions that have had them historically, plummeting snow depths.
 
 \begin{figure}
 	\centering
@@ -166,9 +170,9 @@ For the hot scenario (SSP3-7.0) in Figure \ref{fig:map_temp_370} we can see a ve
 	\label{fig:temp_change_timeseries}
 \end{figure}
 
-The changes in temperature over the years can be seen more clearly in Figure \ref{fig:temp_change_timeseries}, which contains the yearly average temperature for the region in the maps from 1950 to 2015 for observed data, and from 2015 to 2100 for projected data under the two proposed scenarios. We can observe in this figure that the temperature has seen a steady increase since 1950 and follows the same pattern until around 2060 for both scenarios, where we start to see some difference between them. In the case of the hot scenario, the temperature starts increasing rapidly until it reaches an average of just above 0 degrees; on the other hand, the warm scenario starts to see a decrease in the rate of rising temperature in the last two decades of the century, attributable to the efforts in reducing carbon emissions to the atmosphere.
+The changes in temperature over the years can be seen more clearly in Figure \ref{fig:temp_change_timeseries}, which contains the yearly average temperature for the region in the maps from 1950 to 2015 for observed data, and from 2015 to 2100 for projected data under the two proposed scenarios. We can observe in this figure that the temperature has seen a steady increase since 1950 and follows the same pattern until around 2060 for both scenarios, where we start to see a difference between them. In the case of the high emissions scenario, the temperature starts increasing rapidly until it reaches an average of just above zero degrees; on the other hand, the medium emissions scenario starts to show a slowdown in the rate of rising temperature during the last two decades of the century, attributable to the efforts in reducing carbon emissions to the atmosphere by stricter regulations and actions.
 
-Even though we see in the warm scenario that a reduction of temperature is possible, the effects are already too strong to ignore, driving an average temperature increase to around 10°C from a century before.
+Even though we see in the medium emissions scenario that a reduction of warming rate is possible, the effects are already too strong to ignore, driving an average temperature increase to around 8°C from a century before, and 10°C in the worst-case scenario. Following the trends, we can calculate the year at which the average temperatures are higher than the historical maximum recorded for both scenarios, showing the timframe until or current maximums will be the normal. For the medium emissions scenario, this year is 2048; for the high emissions scenario is 2041, a mere 16 and 23 years. Once we reach this point, each year could become record-breaking.
 
 So far, we have seen a steep decrease in the observed and projected snow depth in much of the area of interest, and a steep increase in the average temperature, from which we can conclude that there is an inverse relationship between those variables, i.e., the higher the temperature, the lower the snow depth. To quantify this relationship, we can resort to a least squares linear fitting to get a mathematical model that allows us to estimate the snow depth as a function of temperature. We create a regression plot using the library Seaborn with all our datapoints on the historical records in the area of interest. 
 \begin{figure}
@@ -184,11 +188,11 @@ In Figure \ref{fig:regplot2} we can see the results of the linear fitting with a
 
 Fossil fuels burning over the years has led to a big economic growth and progress in many ways, but it comes with many drawbacks that deserve more attention that we are currently giving them. The concentrations of greenhouse gases in the atmosphere is increasing the global temperature steadily, and what we do to continue or stop doing it can have massive effects on the environment. 
 
-The temperature changes are projected to affect more some areas than others, as seen in Figures, \ref{fig:map_temp_hist}, \ref{fig:map_temp_245} and \ref{fig:map_temp_370}, where the continental part of Atlantic Canada is expected to have the biggest change in temperature from today's conditions, with increases of up to 7.5 degrees celsius during winter. This increase in temperature translates directly into the reduction of ice formation in these regions, and thus a reduction in snow depth. 
+The temperature changes are projected to affect more some areas than others, as seen in Figures \ref{fig:map_temp_hist}, \ref{fig:map_temp_245} and \ref{fig:map_temp_370}, where the continental part of Atlantic Canada is expected to take the biggest hit in temperature from today's conditions, with increases of up to 7.5 degrees celsius during winter. This increase in temperature translates directly into the reduction of ice formation in these regions, and thus a reduction in snow depth. 
 
-Similar to temperature, the snow depth changes are also variable depending on the area, but we see a strong correlation of the greatest reductions in snow depth and the highest temperatures in Figures \ref{fig:map_snow_hist}, \ref{fig:map_snow_245} and \ref{fig:map_snow_370}, where the reduction in the worst-case scenario can be of over 70 cm compared to 70 years ago.
+Similar to temperature, the snow depth changes are also variable depending on the area, but we see a strong correlation of the greatest reductions in snow depth and the highest temperatures in Figures \ref{fig:map_snow_hist}, \ref{fig:map_snow_245} and \ref{fig:map_snow_370}, where the reduction in the worst-case scenario can be of over 70 cm compared to 70 years prior.
 
-There are many projections that tell us how the climate could behave if we control our greenhouse emissions to the atmosphere, and seeing the growing trend in temperature (Figure \ref{fig:temp_change_timeseries}) and a corresponding decreasing trend in snow depth (Figure \ref{fig:snow_change_timeseries}), we could be going at the worst-case scenario if we do not take action now. The Paris agreement, which aimed at capping global warming to 1.5 degrees celsius is long gone, but we can still work to reduce our activity's impact in our home, the Earth.
+Our findings tell a fact: the current path is taking us to the worst-case scenario. The nonstop increase in temperature (Figure \ref{fig:temp_change_timeseries}) and the alarming decline in snow depth (Figure \ref{fig:snow_change_timeseries}) are warnings that demand immediate response. Even though the goal set by the Paris Agreement to limit global warming by 1.5°C is out of reach, we can still take action to mitigate the worst effects, prompting a system-wide change.
 
 \printbibliography
 
