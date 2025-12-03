@@ -7,6 +7,7 @@ from warnings import warn
 import xarray as xr
 from cmocean import cm
 from shapely.geometry import Polygon
+from pypalettes import load_cmap
 
 
 wbound_path = os.path.join(
@@ -65,21 +66,27 @@ class PlotObject:
             linewidth=0.5, edgecolor="#000000", facecolor="#00000000", ax=ax
         )
 
+        has_norm = False
         if "vmin" not in list(kwargs.keys()):
-            vmax = np.quantile(self.data, 0.75)
-            vmin = -vmax
+            if self.var == "snd":
+                vmax = np.quantile(self.data, 0.75)
+                vmin = -vmax
+            else:
+                log = False
+                vmax = np.amax(self.data)
+                vmin = -vmax      
+            has_norm = True          
+            norm = TwoSlopeNorm(0, vmin, vmax) if not log else SymLogNorm(vmin=vmin, vmax=vmax, linthresh=1E-3)
         else:
             vmin = kwargs["vmin"]
             vmax = kwargs["vmax"]
-        norm = TwoSlopeNorm(0, vmin, vmax) if not log else SymLogNorm(vmin=vmin, vmax=vmax, linthresh=1E-3)
 
         if self.var == "snd":
-            cmap = "PuOr"
+            cmap = load_cmap("BrowntoBlue_12", cmap_type="continuous")
             self.data = xr.where(self.data == 0, np.nan, self.data)
         elif self.var == "tas":
             cmap = cm.balance
 
-        print(vmax, vmin)
         im = ax.imshow(
             self.data,
             origin="lower",
@@ -90,7 +97,7 @@ class PlotObject:
                 np.amin(self.latitudes),
                 np.amax(self.latitudes),
             ),
-            norm=norm,
+            norm=norm if has_norm else None,
             **kwargs
         )
         ax.set_xlabel("Longitude")
@@ -116,7 +123,7 @@ class PlotObject:
                 ax.set_title(
                     f"Changes in temperature\nPeriods 2015-2020 against 2095-2100\nScenario {scenario}"
                 )
-            plt.colorbar(im, label="C", shrink=0.75)
+            plt.colorbar(im, label="Celsius", shrink=0.75)
 
         ax.set_xlim(cpoint[1] - buffer * 0.98, cpoint[1] + buffer * 0.98)
         ax.set_ylim(cpoint[0] - buffer * 0.98, cpoint[0] + buffer * 0.98)
